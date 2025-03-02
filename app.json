@@ -9,13 +9,26 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "This app uses the microphone to allow audio playback.",
+        "NSSpeechRecognitionUsageDescription": "This app uses speech recognition for audio playback.",
+        "NSLocationWhenInUseUsageDescription": "We need your location to get accurate prayer times."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
+      "package": "com.wasuan8.Harveymasjid"
     },
     "web": {
       "bundler": "metro",
@@ -24,6 +37,16 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/Pointer.png",
+          "color": "#ffffff",
+          "sounds": [
+            "./assets/AdhaanVioce/Asia.mp3"
+          ]
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -36,6 +59,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "46e404fd-b6a0-4c7a-affa-8096473f9f2b"
+      }
     }
   }
 }

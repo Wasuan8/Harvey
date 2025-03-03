@@ -2,28 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Button, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import useTheme from '@/src/constants/ThemeColor';
+import useTheme from '../../constants/ThemeColor';
 import * as Notifications from 'expo-notifications';
-import { Audio } from 'expo-av'; // Import expo-av for playing sound
-import CustomTimePicker from '@/src/components/CustomTimePicker';
-import HedearSave from '@/src/components/HedearSave';
+import { Audio } from 'expo-av';
+import CustomTimePicker from '../../components/CustomTimePicker';
+import HedearSave from '../../components/HedearSave';
 
 const AlaramSetPage = ({ route }) => {
     const { prayerName, azanTime } = route.params;
-
     const theme = useTheme();
     const [alarmTime, setAlarmTime] = useState(null);
-    console.log(alarmTime)
-    console.log(azanTime)
     const [selectedVoice, setSelectedVoice] = useState(null);
     const [alarmOn, setAlarmOn] = useState(false);
-    const [sound, setSound] = useState(null); // State to manage the sound object
-
+    const [sound, setSound] = useState(null);
     const timePickerRef = useRef(null);
     const navigation = useNavigation();
-    
 
-    // Request notification permissions
     useEffect(() => {
         const requestPermissions = async () => {
             const { status } = await Notifications.requestPermissionsAsync();
@@ -32,88 +26,99 @@ const AlaramSetPage = ({ route }) => {
             }
         };
         requestPermissions();
+
+        // Listener to play the sound when the notification is received
+        const notificationListener = Notifications.addNotificationReceivedListener(async (notification) => {
+            const voicePath = notification.request.content.data.voice;
+            if (voicePath) {
+                console.log("Received notification for sound:", voicePath);
+                await playSound(voicePath);
+            }
+        });
+
+        return () => {
+            Notifications.removeNotificationSubscription(notificationListener);
+        };
     }, []);
 
-    const scheduleNotification = async () => {
-        if (!selectedVoice) {
-            alert('Please select an Azan voice.');
-            return;
-        }
-
-        const trigger = {
-            type: 'date', 
-            timestamp: alarmTime.getTime(),
-        };
-
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: `Azan for ${prayerName}`,
-                body: `It's time for ${prayerName} prayer!`,
-                sound: true, // Play a sound
-                data: { voice: selectedVoice }, 
-            },
-            trigger,
-        });
-        console.log(`Alarm set for ${prayerName} at ${azanTime}`);
-    };
-
-    // Handle alarm toggle
-    const handleAlarmToggle = () => {
-        if (alarmOn) {
-            setAlarmOn(false);
-        } else {
-            if (alarmTime) {
-                setAlarmOn(true);
-                scheduleNotification();
-            } else {
-                alert('Please set an alarm time.');
-            }
-        }
-    };
-
-    const playSoundForTesting = async () => {
-        if (!selectedVoice) {
-            alert('Please select an Azan voice first.');
-            return;
-        }
-
+    // Function to play sound
+    const playSound = async (voiceFile) => {
         try {
+            console.log("Playing Sound File:", voiceFile); // Debugging
+    
             await Audio.requestPermissionsAsync();
             await Audio.setAudioModeAsync({
                 allowsRecordingIOS: false,
                 playsInSilentModeIOS: true,
                 shouldDuckAndroid: true,
                 playThroughEarpieceAndroid: false,
-                staysActiveInBackground: true, 
+                staysActiveInBackground: true,
             });
-
-            const { sound } = await Audio.Sound.createAsync(selectedVoice);
-            setSound(sound); 
+    
+            let soundPath;
+            if (voiceFile === 'asia.mp3') {
+                soundPath = require('../../../assets/AdhaanVioce/asia.mp3');
+            } else if (voiceFile === 'harvey.mp3') {
+                soundPath = require('../../../assets/AdhaanVioce/harvey.mp3');
+            }
+    
+            if (!soundPath) {
+                console.error('Invalid sound path:', voiceFile);
+                return;
+            }
+    
+            const { sound } = await Audio.Sound.createAsync(soundPath);
+            setSound(sound);
             await sound.playAsync();
         } catch (error) {
-            console.error('Failed to play sound', error);
+            console.error('Failed to play sound:', error);
         }
     };
+    
 
-    const stopSound = async () => {
-        if (sound) {
-            await sound.stopAsync();
-            await sound.unloadAsync();
-            setSound(null);
+    // Schedule notification
+    const scheduleNotification = async () => {
+        console.log("Selected voice:", selectedVoice);
+        if (!selectedVoice) {
+            alert('Please select an Azan voice.');
+            return;
         }
+
+        if (!alarmTime) {
+            alert('Please set an alarm time.');
+            return;
+        }
+
+        const trigger = new Date(alarmTime); // Use the selected alarm time
+
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: `Azan for ${prayerName}`,
+                body: `It's time for ${prayerName} prayer!`,
+                data: { voice: selectedVoice, alarmName: prayerName }, // Pass voice path
+                sound: "harvey.mp3", // Ensure no default sound is played
+            },
+            trigger,
+        });
+
+        console.log(`Alarm set for ${prayerName} with sound ${selectedVoice} at ${moment(alarmTime).format('hh:mm A')}`);
+        setAlarmOn(true);
     };
 
-    useEffect(() => {
-        return () => {
-            if (sound) {
-                sound.unloadAsync();
-            }
-        };
-    }, [sound]);
+    // Handle alarm toggle
+    const handleAlarmToggle = () => {
+        if (alarmOn) {
+            setAlarmOn(false);
+            Notifications.cancelAllScheduledNotificationsAsync();
+            console.log('Alarm turned off');
+        } else {
+            scheduleNotification();
+        }
+    };
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-            <HedearSave Heading='Alaram Set' />
+            <HedearSave Heading='Alarm Set' />
             <Text style={styles.title}>Set Alarm for {prayerName}</Text>
             <Text style={styles.time}>Azan Time: {azanTime}</Text>
 
@@ -137,33 +142,19 @@ const AlaramSetPage = ({ route }) => {
 
             {/* Voice Selection Buttons */}
             <TouchableOpacity
-                style={[
-                    styles.voiceButton,
-                    selectedVoice === require('../../../assets/AdhaanVioce/Asia.mp3') && styles.selectedVoiceButton,
-                ]}
-                onPress={() => setSelectedVoice(require('../../../assets/AdhaanVioce/Asia.mp3'))}
+                style={[styles.voiceButton, selectedVoice === 'asia.mp3' && styles.selectedVoiceButton]}
+                onPress={() => setSelectedVoice('asia.mp3')} // Store as a string name
             >
                 <Text>Select Voice 1</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
-                style={[
-                    styles.voiceButton,
-                    selectedVoice === require('../../../assets/AdhaanVioce/Harvey.mp3') && styles.selectedVoiceButton,
-                ]}
-                onPress={() => setSelectedVoice(require('../../../assets/AdhaanVioce/Harvey.mp3'))}
+                style={[styles.voiceButton, selectedVoice === 'harvey.mp3' && styles.selectedVoiceButton]}
+                onPress={() => setSelectedVoice('harvey.mp3')}
             >
                 <Text>Select Voice 2</Text>
             </TouchableOpacity>
 
-            {/* Play Sound for Testing */}
-            <TouchableOpacity style={styles.testButton} onPress={playSoundForTesting}>
-                <Text style={styles.testButtonText}>Play Selected Voice</Text>
-            </TouchableOpacity>
-
-            {/* Stop Sound */}
-            <TouchableOpacity style={styles.stopButton} onPress={stopSound}>
-                <Text style={styles.stopButtonText}>Stop Sound</Text>
-            </TouchableOpacity>
 
             <Button title={alarmOn ? 'Turn Off Alarm' : 'Turn On Alarm'} onPress={handleAlarmToggle} />
         </SafeAreaView>
@@ -212,29 +203,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     selectedVoiceButton: {
-        backgroundColor: '#007BFF', // Highlight selected voice button
-    },
-    testButton: {
-        padding: 10,
-        backgroundColor: '#28a745',
-        marginVertical: 10,
-        borderRadius: 5,
-        alignItems: 'center',
-    },
-    testButtonText: {
-        color: 'white',
-        fontSize: 16,
-    },
-    stopButton: {
-        padding: 10,
-        backgroundColor: '#dc3545',
-        marginVertical: 10,
-        borderRadius: 5,
-        alignItems: 'center',
-    },
-    stopButtonText: {
-        color: 'white',
-        fontSize: 16,
+        backgroundColor: '#007BFF',
     },
 });
 

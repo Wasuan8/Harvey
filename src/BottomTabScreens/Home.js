@@ -22,14 +22,7 @@ const Home = () => {
   const navigation = useNavigation();
   const [islamicDate, setIslamicDate] = useState('')
   const [locationAddress, setLocationAddress] = useState('');
-  const [currentPrayer, setCurrentPrayer] = useState(null);
-  const [nextPrayer, setNextPrayer] = useState({
-    Heading: "Next Prayer",
-    SubHeading: "",
-    Time: "",
-    Subject: "",
-    Icon: require("../../assets/images/1.png"),
-  });
+  
 
 
   const services = [
@@ -39,8 +32,8 @@ const Home = () => {
     { id: '4', name: 'Mosque', icon: require('../../assets/Icon/Mosque.png'), Tab: 'ComingSoon' },
     { id: '5', name: 'Duas', icon: require('../../assets/Icon/Duas.png'), Tab: 'ComingSoon' },
     { id: '6', name: 'Community', icon: require('../../assets/Icon/Community.png'), Tab: 'ComingSoon' },
-    { id: '7', name: 'Donation', icon: require('../../assets/Icon/Donation.png'), Tab: 'ComingSoon' },
-    { id: '4', name: 'Zakat', icon: require('../../assets/Icon/Zakat.png'), Tab: 'ZakatCalculator' },
+    { id: '7', name: 'Donation', icon: require('../../assets/Icon/Donation.png'), Tab: 'Donate' },
+    { id: '4', name: 'Donate Zakat', icon: require('../../assets/Icon/Zakat.png'), Tab: 'ZakatCalculator' },
 
   ];
 
@@ -121,7 +114,7 @@ const Home = () => {
               style={[styles.arabicText, { tintColor: theme.primary }]}
               resizeMode="contain"
             />
-            <Text style={{ fontSize: 20, marginLeft: 15, fontFamily: 'Bold', color: theme.primary }}>Featured</Text>
+            <Text style={{ fontSize: 16, marginLeft: 15, fontFamily: 'Bold', color: theme.primary }}>Featured</Text>
             <FlatList
               data={services}
               numColumns={numColumns}
@@ -146,7 +139,7 @@ const Home = () => {
               contentContainerStyle={styles.container}
             />
 
-            <Text style={{ fontSize: 20, marginLeft: 15, marginTop: 10, fontFamily: 'Bold', color: theme.primary }}>More Featured</Text>
+            <Text style={{ fontSize: 16, marginLeft: 15, marginTop: 10, fontFamily: 'Bold', color: theme.primary }}>More Featured</Text>
 
             <View style={styles.centeredView}>
               <View style={[styles.modalView, { backgroundColor: theme.input, borderColor: theme.textBorder, shadowColor: theme.input }]}>
@@ -211,6 +204,7 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    flexWrap:'wrap'
   },
   smallcard: {
     borderRadius: 15,
@@ -235,11 +229,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: 'SemiBold',
     textAlign: 'center',
+    // width: '80%'
   },
 
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: 'Bold',
     marginBottom: 15,
     textAlign: 'center',
   },

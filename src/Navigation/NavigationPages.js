@@ -1,19 +1,25 @@
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Login from '../../src/Screens/Login';
-import Register from '../../src/Screens/Register';
-import PasswordwithEmail from '@/src/Screens/PasswordReset/PasswordwithEmail';
-import Dummy from '@/src/Screens/Dummy';
-import ZakatCalculator from '@/src/Screens/ZakatCalc/ZakatCalculator';
-import AlaramSetPage from '@/src/Screens/AlaramScreen/AlaramSetPage';
-import AlarmScreen from '@/src/Screens/AlaramScreen/AlarmScreen';
-import QiblaFinder from '@/src/Screens/QiblaFinder';
+
+import Register from '../Screens/Register';
+import Login from '../Screens/Login';
+import Splash from '../Screens/SplashPage';
 import BottomTab from './BottomTab';
-import SplashPage from '@/src/Screens/SplashPage';
-import ShowNamaj from '@/src/Screens/NamajPage/ShowNamaj';
-import SalatSaved from '@/src/Screens/NamajPage/SalatSaved';
-import ResetPassword from '@/src/Screens/PasswordReset/ResetPassword';
-import CheckOutUser from '@/src/Screens/PaymentPage/CheckOutUser';
+import Dummy from '../Screens/Dummy';
+import PasswordwithEmail from '../Screens/PasswordReset/PasswordwithEmail';
+import ResetPassword from '../Screens/PasswordReset/ResetPassword';
+import ZakatCalculator from '../Screens/ZakatCalc/ZakatCalculator';
+import AlaramSetPage from '../Screens/AlaramScreen/AlaramSetPage';
+import AlarmScreen from '../Screens/AlaramScreen/AlarmScreen';
+import QiblaFinder from '../Screens/QiblaFinder';
+import ShowNamaj from '../Screens/NamajPage/ShowNamaj';
+import SalatSaved from '../Screens/NamajPage/SalatSaved';
+import CheckOutUser from '../Screens/PaymentPage/CheckOutUser'
+
+
+
+
+
 
 const Stack = createNativeStackNavigator();
 
@@ -21,7 +27,7 @@ const NavigationPages = () => {
 
     return (
         <Stack.Navigator initialRouteName='Splash'>
-            <Stack.Screen name='Splash' component={SplashPage} options={{ headerShown: false }} />
+            <Stack.Screen name='Splash' component={Splash} options={{ headerShown: false }} />
             <Stack.Screen name='Login' component={Login} options={{ headerShown: false }} />
             <Stack.Screen name='Register' component={Register} options={{ headerShown: false }} />
             <Stack.Screen name='PasswordwithEmail' component={PasswordwithEmail} options={{ headerShown: false }} />

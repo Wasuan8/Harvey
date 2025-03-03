@@ -7,7 +7,8 @@ import useTheme from '../constants/ThemeColor';
 
 
 
-const SplashPage = () => {
+const Splash
+ = () => {
     const theme = useTheme()
     const themeImg = useColorScheme();
 
@@ -54,6 +55,7 @@ const SplashPage = () => {
     )
 }
 
-export default SplashPage
+export default Splash
+
 
 const styles = StyleSheet.create({})

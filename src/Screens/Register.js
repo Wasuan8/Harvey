@@ -11,8 +11,8 @@ import { makeRequest } from '../utils/CustomeApiCall';
 import useTheme from '../constants/ThemeColor';
 import { RegistrationURL } from '../utils/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import ToastAlert from '../utils/ToastAlert';
+import { Checkbox } from 'react-native-paper';
 
 
 const Register = () => {
@@ -134,8 +134,8 @@ const Register = () => {
         </View>
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
 
-          <View style={{ flexDirection: 'row', width: '90%', justifyContent: 'flex-start', marginTop: 5 }}>
-            <BouncyCheckbox
+          <View style={{ flexDirection: 'row', width: '90%', justifyContent: 'flex-start', alignItems:'center', marginTop: 5 }}>
+            {/* <BouncyCheckbox
               size={20}
               fillColor={theme.fillIcon}
               isChecked={formik.values.terms}
@@ -146,6 +146,11 @@ const Register = () => {
                 textDecorationLine: "none",
               }}
               onPress={() => formik.setFieldValue('terms', !formik.values.terms)}
+            /> */}
+            <Checkbox
+              status={formik.values.terms ? 'checked' : 'unchecked'} // Set the checkbox status
+              onPress={() => formik.setFieldValue('terms', !formik.values.terms)} // Handle press
+              color={theme.fillIcon} // Custom color for the checkbox
             />
 
             <Text style={{ textAlign: 'center', fontSize: 17, color: theme.placeholderTextColor, fontWeight: '400' }}>I agree with</Text>

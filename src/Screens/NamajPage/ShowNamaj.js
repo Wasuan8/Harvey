@@ -1,16 +1,14 @@
 import { FlatList, Image, SafeAreaView, StyleSheet, Text, View, Alert } from 'react-native';
 import React, { useState, useEffect, useRef } from 'react';
-import useTheme from '@/src/constants/ThemeColor';
+import useTheme from '../../constants/ThemeColor';
 import { TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-import * as Location from 'expo-location';
-import axios from 'axios';
-import * as Calendar from 'expo-calendar'; // For calendar integration
-import { makeRequest } from '@/src/utils/CustomeApiCall';
-import { GetMonthPrayer } from '@/src/utils/api';
-import ToastAlert from '@/src/utils/ToastAlert';
+import { makeRequest } from '../../utils/CustomeApiCall';
+import { GetMonthPrayer } from '../../utils/api';
+import ToastAlert from '../../utils/ToastAlert';
 import moment from 'moment';
+import axios from 'axios';
 
 // const prayerData = {
 //     month: "March",
@@ -123,7 +121,6 @@ const ShowNamaj = () => {
     const theme = useTheme();
     const toastRef = useRef(null);
     const navigation = useNavigation();
-    const [location, setLocation] = useState(null);
     const [islamicDate, setIslamicDate] = useState('');
     const [locationAddress, setLocationAddress] = useState('');
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -251,7 +248,6 @@ const ShowNamaj = () => {
     ];
 
     const handlePrayerPress = (prayer) => {
-        console.log('Selected Prayer:', prayer.name);
         navigation.navigate('AlaramSetPage', {
             prayerName: prayer.name,
             azanTime: today[prayer.key]?.azanTime || 'N/A', // Fallback to 'N/A' if azanTime is undefined
@@ -261,7 +257,7 @@ const ShowNamaj = () => {
     // Render function with null checks
     const renderPrayerItem = ({ item, index }) => {
         const isNextPrayer = index === nextPrayerIndex;
-        const prayerTimes = today[item.key] || {}; // Fallback to an empty object if prayerTimes is undefined
+        const prayerTimes = today[item.key] || {}; 
 
         return (
             <TouchableOpacity
@@ -290,6 +286,48 @@ const ShowNamaj = () => {
         );
     };
 
+    useEffect(() => {
+        requestLocation();
+
+    }, [islamicDate]);
+
+    const requestLocation = async () => {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+            Alert.alert("Permission Denied", "Enable location to get prayer times.");
+            return;
+        }
+
+        const location = await Location.getCurrentPositionAsync({});
+        fetchPrayerTimes(location.coords.latitude, location.coords.longitude);
+    };
+
+    const fetchPrayerTimes = async (lat, lon) => {
+        try {
+            const response = await axios.get(
+                `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=99&school=1&latitudeAdjustmentMethod=3&params=18,null,null,null`
+            );
+
+            if (response.data && response.data.data) {
+                const { date, meta } = response.data.data;
+
+                const islamicYear = date.hijri.year;
+                const islamicDay = date.hijri.day;
+                const islamicMonth = date.hijri.month.en; 
+                const locationAddress = meta.timezone; 
+
+                const islamicDateFormatted = `${islamicDay} ${islamicMonth} ${islamicYear}`;
+
+                setIslamicDate(islamicDateFormatted);
+                setLocationAddress(locationAddress);
+
+            }
+        } catch (error) {
+            console.error("Error fetching prayer times:", error);
+        }
+    };
+
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
             <ToastAlert ref={toastRef} />
@@ -317,27 +355,30 @@ const ShowNamaj = () => {
                 />
 
                 <View style={styles.overlay}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'column' }}>
-                            <Text style={styles.header}>Prayers Time</Text>
-                            <Text style={styles.subHeader}>{locationAddress}</Text>
-                            <Text style={styles.hijriDate}>{islamicDate}</Text>
+
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <View style={{ flexDirection: 'column' }}>
+                                <Text style={styles.header}>Prayers Time</Text>
+                                <Text style={styles.subHeader}>{locationAddress}</Text>
+                                <Text style={styles.hijriDate}>{islamicDate}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <TouchableOpacity>
+                                    <Image
+                                        style={{ width: 25, height: 25, tintColor: theme.input, marginRight: 20 }}
+                                        source={{ uri: 'https://cdn-icons-png.flaticon.com/128/7099/7099096.png' }}
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity>
+                                    <Image
+                                        style={{ width: 25, height: 25, tintColor: theme.input }}
+                                        source={{ uri: 'https://cdn-icons-png.flaticon.com/128/1358/1358023.png' }}
+                                    />
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <TouchableOpacity>
-                                <Image
-                                    style={{ width: 25, height: 25, tintColor: theme.input, marginRight: 20 }}
-                                    source={{ uri: 'https://cdn-icons-png.flaticon.com/128/7099/7099096.png' }}
-                                />
-                            </TouchableOpacity>
-                            <TouchableOpacity>
-                                <Image
-                                    style={{ width: 25, height: 25, tintColor: theme.input }}
-                                    source={{ uri: 'https://cdn-icons-png.flaticon.com/128/1358/1358023.png' }}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+
+                 
 
                     <View style={styles.navigationContainer}>
                         <TouchableOpacity onPress={handlePrevious} style={styles.navigationButton}>
@@ -347,7 +388,7 @@ const ShowNamaj = () => {
                             />
                         </TouchableOpacity>
                         <Text style={[styles.date, { color: theme.input, fontFamily: 'Regular' }]}>
-                            {today.day || 'N/A'}, {today.date || 'N/A'} {/* Fallback to 'N/A' if today is undefined */}
+                            {today.day || 'N/A'}, {today.date || 'N/A'} 
                         </Text>
                         <TouchableOpacity onPress={handleNext} style={styles.navigationButton}>
                             <Image
@@ -379,7 +420,7 @@ const ShowNamaj = () => {
                 </View>
                 <Image
                     source={require('../../../assets/images/bismillah.png')}
-                    style={styles.arabicText}
+                    style={[styles.arabicText, {tintColor: theme.input}]}
                     resizeMode="contain"
                 />
             </LinearGradient>

@@ -121,7 +121,7 @@ const Login = () => {
                     <View style={{ flexDirection: 'column' }}>
 
 
-                        <Text style={{ color: theme.heading, fontSize: 16, fontFamily:'Regular', }}>Password</Text>
+                        <Text style={{ color: theme.primary, fontSize: 16, fontFamily:'SemiBold', }}>Password</Text>
 
                         <View style={{
                             flexDirection: "row", justifyContent: 'space-between', alignItems: 'center',

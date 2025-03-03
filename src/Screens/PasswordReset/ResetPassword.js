@@ -3,12 +3,12 @@ import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useFormik } from 'formik';
-import SubmitButton from '@/src/components/SubmitButton';
-import { PasswordSchema } from '@/src/constants/Schema';
-import useTheme from '@/src/constants/ThemeColor';
-import { PasswordReset } from '@/src/utils/api';
-import { makeRequest } from '@/src/utils/CustomeApiCall';
-import { CustomTextInput } from '@/src/components/CustomTextInput';
+import SubmitButton from '../../components/SubmitButton';
+import { PasswordSchema } from '../../constants/Schema'; 
+import useTheme from '../../constants/ThemeColor';
+import { PasswordReset } from '../../utils/api';
+import { makeRequest } from '../../utils/CustomeApiCall'; 
+import { CustomTextInput } from '../../components/CustomTextInput'; 
 
 const ResetPassword = () => {
     const theme = useTheme();

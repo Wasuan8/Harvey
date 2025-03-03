@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import useTheme from '@/src/constants/ThemeColor';
-import Home from '@/src/BottomTabScreens/Home';
-import Setting from '@/src/BottomTabScreens/Setting';
-import DonateUser from '@/src/BottomTabScreens/DonateUser';
-import DonateAdmin from '@/src/BottomTabScreens/DonateAdmin';
+import useTheme from '../constants/ThemeColor';
+import HomeAdmin from '../BottomTabScreens/HomeAdmin'
+import Home from '../BottomTabScreens/Home'
+import NamajAdmin from '../BottomTabScreens/NamajAdmin'
+import ShowNamaj from '../Screens/NamajPage/ShowNamaj'
+import DonateAdmin from '../BottomTabScreens/DonateAdmin'
+import DonateUser from '../BottomTabScreens/DonateUser'
+import Setting from '../BottomTabScreens/Setting';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import HomeAdmin from '@/src/BottomTabScreens/HomeAdmin';
-import NamajAdmin from '@/src/BottomTabScreens/NamajAdmin';
-import ShowNamaj from '@/src/Screens/NamajPage/ShowNamaj';
+
+
 
 
 const Tab = createBottomTabNavigator();

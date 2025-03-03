@@ -1,16 +1,16 @@
 import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import HedearSave from '@/src/components/HedearSave';
-import useTheme from '@/src/constants/ThemeColor';
-import { CustomTextInput } from '@/src/components/CustomTextInput';
-import SubmitButton from '@/src/components/SubmitButton';
+import HedearSave from '../../components/HedearSave';
+import useTheme from '../../constants/ThemeColor';
+import { CustomTextInput } from '../../components/CustomTextInput';
+import SubmitButton from '../../components/SubmitButton';
 import { useFormik } from 'formik';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import { CreatePayment } from '@/src/utils/api';
-import ToastAlert from '@/src/utils/ToastAlert';
-import { CustomDropDown } from '@/src/components/CustomDropDown';
-import { makeRequest } from '@/src/utils/CustomeApiCall';
+import { CreatePayment } from '../../utils/api'; 
+import ToastAlert from '../../utils/ToastAlert';
+import { CustomDropDown } from '../../components/CustomDropDown'; 
+import { makeRequest } from '../../utils/CustomeApiCall'; 
 
 
 const ZakatCalculator = () => {
@@ -72,7 +72,7 @@ const ZakatCalculator = () => {
 
     useEffect(() => {
         calculateZakat();
-    }, [values]); // Auto-update whenever values change
+    }, [values]);
 
     const calculateZakat = () => {
         const totalAssets =
@@ -84,9 +84,10 @@ const ZakatCalculator = () => {
         const totalLiabilities = Number(values.liabilities);
         const netWealth = totalAssets - totalLiabilities;
         const nisab = Math.min(nisabGold, nisabSilver);
+        const amount = (netWealth *  0.025).toFixed(2)
 
         if (netWealth >= nisab) {
-            formik.setFieldValue("amount", netWealth * 0.025)
+            formik.setFieldValue("amount", amount)
 
         } else {
             formik.setFieldValue("amount", 0)
@@ -145,7 +146,7 @@ const ZakatCalculator = () => {
             number: formik.values.number,
             email: formik.values.email,
             category: "Zakat",
-            amount: formik.values.amount.toFixed(2),
+            amount: formik.values.amount,
             paymentMethod: formik.values.paymentMethod
         };
         console.log(ParamData)
@@ -208,7 +209,7 @@ const ZakatCalculator = () => {
                     textPropertyName="name"
                 />
                 {formik.values.amount !== null && (
-                    <SubmitButton onPress={formik.handleSubmit} ShowText={`Zakat Payable: ${formik.values.amount.toFixed(2)}`} />
+                    <SubmitButton onPress={formik.handleSubmit} ShowText={`Zakat Payable: ${formik.values.amount}`} />
                 )}
 
 

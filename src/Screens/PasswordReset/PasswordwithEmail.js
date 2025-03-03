@@ -1,17 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Animated, Platform, SafeAreaView, Modal, Pressable, Image, useAnimatedValue } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Animated, Platform, SafeAreaView, } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { useNavigation } from 'expo-router';
-import { ForgotePassword, PasswordSchema } from '@/src/constants/Schema';
+import { ForgotePassword } from '../../constants/Schema'; 
 import { useFormik } from 'formik';
-import useTheme from '@/src/constants/ThemeColor';
-import HedearSave from '@/src/components/HedearSave';
+import useTheme from '../../constants/ThemeColor';
+import HedearSave from '../../components/HedearSave';
 import { ScrollView } from 'react-native';
-import { CustomTextInput } from '@/src/components/CustomTextInput';
-import { bool } from 'yup';
-import SubmitButton from '@/src/components/SubmitButton';
-import { makeRequest } from '@/src/utils/CustomeApiCall';
-import { EmailVerifyPassword, OTPVerifyPassowrd, PasswordReset } from '@/src/utils/api';
+import { CustomTextInput } from '../../components/CustomTextInput'; 
+import SubmitButton from '../../components/SubmitButton';
+import { makeRequest } from '../../utils/CustomeApiCall'; 
+import { EmailVerifyPassword, OTPVerifyPassowrd } from '../../utils/api';
 
 
 const initialValues = {

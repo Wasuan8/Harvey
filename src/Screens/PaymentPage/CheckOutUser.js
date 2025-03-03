@@ -1,12 +1,12 @@
 import { ActivityIndicator, Alert, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import HedearSave from '@/src/components/HedearSave'
-import ToastAlert from '@/src/utils/ToastAlert';
+import HedearSave from '../../components/HedearSave';
+import ToastAlert from '../../utils/ToastAlert';
 import { WebView } from "react-native-webview";
-import { makeRequest } from '@/src/utils/CustomeApiCall';
-import { ConfirmPayment } from '@/src/utils/api';
+import { makeRequest } from '../../utils/CustomeApiCall'; 
+import { ConfirmPayment } from '../../utils/api';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import useTheme from '@/src/constants/ThemeColor';
+import useTheme from '../../constants/ThemeColor';
 
 
 const CheckOutUser = () => {

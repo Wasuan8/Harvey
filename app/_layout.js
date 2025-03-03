@@ -1,19 +1,18 @@
-import { ActivityIndicator, StatusBar, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, StatusBar, StyleSheet, Text, useColorScheme, View } from 'react-native'
 import React, { useEffect } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { NavigationContainer, ThemeProvider } from '@react-navigation/native'
-import useTheme from '@/src/constants/ThemeColor'
-import NavigationPages from './Navigation/NavigationPages';
+import useTheme from '../src/constants/ThemeColor'
 import { useFonts } from "expo-font";
-
+import 'react-native-polyfill-globals/auto';
+import NavigationPages from '../src/Navigation/NavigationPages';
 const _layout = () => {
   const theme = useTheme();
-
+  const themebg = useColorScheme();
   const [fontsLoaded, fontError] = useFonts({
     Bold: require('../assets/fonts/Poppins-Bold.ttf'),
     Black: require('../assets/fonts/Poppins-Black.ttf'),
     Light: require('../assets/fonts/Poppins-Light.ttf'),
-    Regular: require('../assets/fonts/Poppins-Regular.ttf'), 
+    Regular: require('../assets/fonts/Poppins-Regular.ttf'),
     Medium: require('../assets/fonts/Poppins-Medium.ttf'),
     SemiBold: require('../assets/fonts/Poppins-SemiBold.ttf'),
   });
@@ -29,7 +28,7 @@ const _layout = () => {
     }
   }, [fontsLoaded, fontError]);
 
- 
+
   if (!theme) {
     console.error("⚠️ Theme is undefined! Check useTheme().");
     return null;
@@ -37,7 +36,7 @@ const _layout = () => {
 
   return (
     <SafeAreaProvider>
-      <StatusBar backgroundColor={theme.background} barStyle="light-content" />
+      <StatusBar backgroundColor={theme.background}  barStyle={themebg === 'dark' ? 'light-content' : 'dark-content'} />
       <NavigationPages />
     </SafeAreaProvider>
   )

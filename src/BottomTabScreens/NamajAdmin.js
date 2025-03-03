@@ -49,12 +49,10 @@ const NamajAdmin = () => {
   });
   const [expandedItems, setExpandedItems] = useState({});
 
-
   useEffect(() => {
     generateDays(month, currentYear);
     SearchDataByMonths();
   }, [month]);
-
 
   const toggleDropdown = (date) => {
     setExpandedItems((prev) => ({
@@ -66,20 +64,17 @@ const NamajAdmin = () => {
   const generateDays = (month, year) => {
     if (!month || !year) return;
 
-    // Get total days in the selected month
     const totalDays = moment(`${year}-${month}`, "YYYY-MM").daysInMonth();
     const allDays = [...Array(totalDays).keys()].map((d) => String(d + 1).padStart(2, "0"));
 
-    // Filter out days that are already present in the backend data
     const filteredDays = allDays.filter((day) => {
       const date = `${year}-${month}-${day}`;
       return !backendData.some((backendDay) => backendDay.date === date);
     });
 
     setDays(filteredDays);
-    setSelectedDate(null); // Reset selected date
+    setSelectedDate(null);
   };
-
 
   const addPrayerTime = () => {
     if (!selectedDate) {
@@ -131,7 +126,6 @@ const NamajAdmin = () => {
       text: `Prayer time added for ${selectedDate}-${month}-${currentYear}`,
       duration: 2000,
     });
-
   };
 
   const submitData = async () => {
@@ -166,7 +160,7 @@ const NamajAdmin = () => {
             text: `${returnData.msg}`,
             duration: 2000,
           });
-          setAddedDays([]); // Clear locally added data after successful submission
+          setAddedDays([]);
           setBackendData((prev) => [...prev, ...addedDays]);
         } else {
           toastRef.current.show({
@@ -190,13 +184,9 @@ const NamajAdmin = () => {
     return moment(`${currentYear}-${month}-${day}`, "YYYY-MM-DD").format("dddd");
   };
 
-
-
-
   const handleDateSelection = (day) => {
     const date = `${currentYear}-${month}-${day}`;
 
-    // Check if the selected date already exists in the backend data
     const isDateAlreadyAdded = backendData.some((backendDay) => backendDay.date === date);
 
     if (isDateAlreadyAdded) {
@@ -211,7 +201,6 @@ const NamajAdmin = () => {
     setSelectedDate(day);
     setShowPicker(false);
 
-    // Handle Friday logic (if needed)
     const isFriday = getDayOfWeek(day) === "Friday";
     if (isFriday) {
       setPrayerTimes((prev) => {
@@ -231,6 +220,7 @@ const NamajAdmin = () => {
       });
     }
   };
+
   const SearchDataByMonths = async () => {
     if (!month) return;
 
@@ -244,41 +234,34 @@ const NamajAdmin = () => {
           console.log(returnData.data.month);
           setBackendData(returnData.data.days);
           console.log(returnData.data.days);
-        }
-        else {
+        } else {
           setBackendData([]);
-
         }
       })
       .catch(error => {
-
         setBackendData([]);
-
-
       });
   };
 
   const filteredData = [...backendData, ...addedDays].map(({ _id, ...rest }) => rest);
-
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
       <Headerdash Heading={'Add Namaj'} />
       <ToastAlert ref={toastRef} />
 
-
       <FlatList
         style={{ padding: 10, marginTop: 10, marginBottom: 70 }}
-        data={['section']} // Use a single item to create a single section
+        data={['section']}
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
           <>
-            <TouchableOpacity onPress={() => navigation.navigate('SalatSaved')} style={{ width: '45%', borderRadius: 15, borderWidth: 1, padding: 10, backgroundColor: theme.blurEffect, borderColor: theme.textBorder, shadowColor: theme.blurEffect, flexDirection: 'row', alignItems: 'center' }}>
-              <Image style={{ height: 25, width: 25, }} source={require('../../assets/Icon/Saved.png')} />
+            <TouchableOpacity onPress={() => navigation.navigate('SalatSaved')} style={{ width: '40%', borderRadius: 20, borderWidth: 1, padding: 8, backgroundColor: theme.blurEffect, borderColor: theme.textBorder, shadowColor: theme.blurEffect, flexDirection: 'row', alignItems: 'center' }}>
+              <Image style={{ height: 20, width: 20 }} source={require('../../assets/Icon/Saved.png')} />
               <Text style={{ marginLeft: 10, fontSize: 16, fontFamily: 'SemiBold', color: theme.primary }}>Saved Salat</Text>
             </TouchableOpacity>
 
-            <Card style={{ padding: 15, marginBottom: 10, borderRadius: 15, borderWidth: 1, marginTop: 10, backgroundColor: theme.blurEffect, borderColor: theme.textBorder, shadowColor: theme.blurEffect }}>
+            <Card style={{ padding: 10, marginBottom: 10, borderRadius: 15, borderWidth: 1, marginTop: 10, backgroundColor: theme.blurEffect, borderColor: theme.textBorder, shadowColor: theme.blurEffect }}>
               <Text style={{ marginTop: 10, fontSize: 16, fontFamily: 'SemiBold', color: theme.primary }}>Select Month</Text>
 
               <RNPickerSelect
@@ -288,7 +271,7 @@ const NamajAdmin = () => {
                 }}
                 items={months}
                 value={month}
-                placeholder={{ label: "Select Month", value: null, }}
+                placeholder={{ label: "Select Month", value: null }}
                 style={{
                   inputIOS: {
                     color: theme.heading,
@@ -307,17 +290,17 @@ const NamajAdmin = () => {
                   },
                 }}
               />
-              <Text style={{ marginTop: 10, fontSize: 16, fontFamily: 'SemiBold', color: theme.primary }}> Year:  {currentYear}</Text>
+              <Text style={{ marginTop: 10, fontSize: 16, fontFamily: 'SemiBold', color: theme.primary }}> Year: {currentYear}</Text>
             </Card>
 
             {days.length > 0 && months.length > 0 && (
               <Card style={{ padding: 10, borderRadius: 15, borderWidth: 1, backgroundColor: theme.blurEffect, borderColor: theme.textBorder, shadowColor: theme.blurEffect }}>
-                <Text style={{ fontSize: 16, fontFamily: 'SemiBold', color: theme.primary }}>{`Select Date ${getDayOfWeek(selectedDate) ? getDayOfWeek(selectedDate) : ""} `}</Text>
-                <SubmitButton onPress={() => setShowPicker(true)} ShowText={`Pick a Date  ${selectedDate ? selectedDate : 'date'}-${month}-${currentYear}`} />
+                <Text style={{ fontSize: 16, fontFamily: 'SemiBold', color: theme.primary }}>{`Select Date ${getDayOfWeek(selectedDate) ? getDayOfWeek(selectedDate) : ""}`}</Text>
+                <SubmitButton onPress={() => setShowPicker(true)} ShowText={`Pick a Date ${selectedDate ? selectedDate : 'date'}-${month}-${currentYear}`} />
 
-                <Modal visible={showPicker} transparent >
+                <Modal visible={showPicker} transparent>
                   <View style={{ justifyContent: "center", backgroundColor: theme.background, marginBottom: 60, marginTop: 50, borderColor: theme.textBorder, shadowColor: theme.blurEffect }}>
-                    <View style={{ padding: 10, borderRadius: 10, }}>
+                    <View style={{ padding: 10, borderRadius: 10 }}>
                       <FlatList
                         data={days}
                         keyExtractor={(item) => item}
@@ -348,15 +331,14 @@ const NamajAdmin = () => {
                       flexDirection: 'row',
                       borderWidth: 1, borderColor: theme.textBorder, width: '90%', marginTop: 8,
                       marginHorizontal: 5, borderRadius: 15, padding: 10, height: 45, justifyContent: 'space-between'
-                    }} >
-
+                    }}>
                       <CustomTimePicker
                         onConfirm={(text) =>
                           setPrayerTimes((prev) => ({ ...prev, [prayer]: { ...prev[prayer], azanTime: text } }))}
                         Value={prayerTimes[prayer].azanTime}
                         Placeholder="Azan time"
                       />
-                      <Image style={{ height: 25, width: 25, }} source={require('../../assets/Icon/Ajaan.png')} />
+                      <Image style={{ height: 25, width: 25 }} source={require('../../assets/Icon/Ajaan.png')} />
 
                       <CustomTimePicker
                         onConfirm={(text) =>
@@ -364,16 +346,13 @@ const NamajAdmin = () => {
                         Value={prayerTimes[prayer].salatTime}
                         Placeholder="Salat Time"
                       />
-                      <Image style={{ height: 25, width: 25, }} source={require('../../assets/Icon/Salaat.png')} />
-
+                      <Image style={{ height: 25, width: 25 }} source={require('../../assets/Icon/Salaat.png')} />
                     </View>
-
                   </View>
                 ))}
                 <SubmitButton onPress={addPrayerTime} ShowText='Add Prayer Time' />
               </Card>
             )}
-
 
             {filteredData.length > 0 && (
               <Card style={{ marginTop: 10, padding: 10, marginBottom: 15, borderRadius: 15, borderWidth: 1, backgroundColor: theme.blurEffect, borderColor: theme.textBorder, shadowColor: theme.blurEffect }}>
@@ -450,7 +429,6 @@ const NamajAdmin = () => {
               </Card>
             )}
 
-
             <SubmitButton onPress={submitData} ShowText='Submit Prayer Times' />
           </>
         )}
@@ -460,6 +438,7 @@ const NamajAdmin = () => {
 };
 
 export default NamajAdmin;
+
 const styles = StyleSheet.create({
   selector: {
     width: '100%',
@@ -477,5 +456,4 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginLeft: 5,
   },
-
 });

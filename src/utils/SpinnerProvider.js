@@ -1,7 +1,7 @@
 import LottieView from 'lottie-react-native';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { View,  } from 'react-native';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { View } from 'react-native';
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters'; // Updated import
 
 const SpinnerContext = createContext();
 
@@ -15,8 +15,6 @@ export const SpinnerProvider = ({ children }) => {
   const hideSpinner = () => {
     setIsSpinnerVisible(false);
   };
-
-
 
   return (
     <SpinnerContext.Provider
@@ -36,8 +34,12 @@ export const SpinnerProvider = ({ children }) => {
             alignItems: 'center',
           }}
         >
-          <LottieView style={{ height: hp('40'), width: '50%', alignSelf:'center' }} source={require("../../assets/Animation/Loader.json")} autoPlay loop />
-
+          <LottieView
+            style={{ height: verticalScale(160), width: '50%', alignSelf: 'center' }} // Updated height
+            source={require("../../assets/Animation/Loader.json")}
+            autoPlay
+            loop
+          />
         </View>
       )}
     </SpinnerContext.Provider>
